@@ -46,6 +46,10 @@
 @property (nonatomic, assign) NSInteger minPhotoHeightSelectable;
 @property (nonatomic, assign) BOOL hideWhenCanNotSelect;
 
+/// Default value is 0 seconds
+/// 相册中视频最大时间，若>0，表明超过此时长的视频将不在相册中显示，若<=0，则忽略，单位是秒，默认是0秒
+@property (assign, nonatomic) NSTimeInterval albumVideoMaximumDuration;
+
 /// Return YES if Authorized 返回YES如果得到了授权
 - (BOOL)authorizationStatusAuthorized;
 - (void)requestAuthorizationWithCompletion:(void (^)(void))completion;

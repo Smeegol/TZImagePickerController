@@ -59,6 +59,7 @@
     self.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationBar.translucent = YES;
     [TZImageManager manager].shouldFixOrientation = NO;
+    [TZImageManager manager].albumVideoMaximumDuration = self.albumVideoMaximumDuration;
 
     // Default appearance, you can reset these after this method
     // 默认的外观，你可以在这个方法后重置
