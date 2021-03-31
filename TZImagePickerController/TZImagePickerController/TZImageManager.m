@@ -144,8 +144,13 @@ static dispatch_once_t onceToken;
     NSMutableArray *albumArr = [NSMutableArray array];
     PHFetchOptions *option = [[PHFetchOptions alloc] init];
     if (!config.allowPickingVideo) option.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeImage];
-    if (!config.allowPickingImage) option.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld",
-                                                PHAssetMediaTypeVideo];
+    if (!config.allowPickingImage) {
+        if (self.albumVideoMaximumDuration > 0) {
+            option.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld AND duration <= %f", PHAssetMediaTypeVideo, self.albumVideoMaximumDuration];
+        } else {
+            option.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeVideo];
+        }
+    }
     // option.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"modificationDate" ascending:self.sortAscendingByModificationDate]];
     if (!self.sortAscendingByModificationDate) {
         option.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:self.sortAscendingByModificationDate]];
@@ -255,6 +260,11 @@ static dispatch_once_t onceToken;
             return nil;
         }
     }
+    
+    if (type == TZAssetModelMediaTypeVideo && self.albumVideoMaximumDuration > 0 && phAsset.duration > self.albumVideoMaximumDuration) {
+        return nil;
+    }
+    
     NSString *timeLength = type == TZAssetModelMediaTypeVideo ? [NSString stringWithFormat:@"%0.0f",phAsset.duration] : @"";
     timeLength = [self getNewTimeFromDurationSecond:timeLength.integerValue];
     model = [TZAssetModel modelWithAsset:asset type:type timeLength:timeLength];
